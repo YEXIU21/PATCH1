@@ -13,6 +13,52 @@
   flex-direction: column;
 }
 
+/* Mobile Auth Buttons */
+.mobile-auth-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color, #30363d);
+  margin-bottom: 10px;
+}
+
+.mobile-login-btn,
+.mobile-signup-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  width: 48%;
+}
+
+.mobile-login-btn {
+  background-color: var(--secondary, #21262d);
+  color: var(--text-primary, #e6edf3);
+}
+
+.mobile-signup-btn {
+  background-color: var(--primary, #5047e5);
+  color: white;
+}
+
+.mobile-login-btn:hover,
+.mobile-signup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-login-btn svg,
+.mobile-signup-btn svg {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
 /* User Status */
 .user-status {
   display: flex;

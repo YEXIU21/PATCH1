@@ -26,6 +26,14 @@ import TrophyIcon from '@mui/icons-material/EmojiEvents';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import GroupIcon from '@mui/icons-material/Group';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
+// Import profile image
+import ProfilePicture from '../assets/ProfilePicture.jpg';
+
+// Import Auth components
+import AuthModals from './AuthModals';
 
 const Sidebar: React.FC = () => {
   const [isPWAInstalled, setIsPWAInstalled] = useState(false);
@@ -35,6 +43,8 @@ const Sidebar: React.FC = () => {
     player: false,
     support: false
   });
+  const [showAuth, setShowAuth] = useState(false);
+  const [initialModal, setInitialModal] = useState<'login' | 'signup' | 'forgotPassword' | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,6 +81,26 @@ const Sidebar: React.FC = () => {
     if (sidebar && isMobile) {
       sidebar.classList.remove('active');
     }
+  };
+
+  // Handle login button click
+  const handleLogin = () => {
+    setInitialModal('login');
+    setShowAuth(true);
+    closeMobileMenu();
+  };
+
+  // Handle signup button click
+  const handleSignup = () => {
+    setInitialModal('signup');
+    setShowAuth(true);
+    closeMobileMenu();
+  };
+
+  // Close auth modals
+  const closeAuth = () => {
+    setShowAuth(false);
+    setInitialModal(null);
   };
 
   // Share functionality
@@ -163,133 +193,108 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="sidebar">
-      {isMobile && (
-        <div className="mobile-sidebar-header">
-          <button className="close-sidebar-btn" onClick={closeMobileMenu}>
-            <CloseIcon />
-          </button>
-        </div>
-      )}
+    <>
+      <aside className="sidebar">
+        {isMobile && (
+          <div className="mobile-sidebar-header">
+            <button className="close-sidebar-btn" onClick={closeMobileMenu}>
+              <CloseIcon />
+            </button>
+          </div>
+        )}
 
-      {/* User Status */}
-      <div className="user-status">
-        <div className="user-avatar">
-          <img src="https://via.placeholder.com/40" alt="User" />
-          <span className="status-indicator online"></span>
-        </div>
-        <div className="user-info">
-          <div className="user-name">Player VIP</div>
-          <div className="user-balance">₱1,250.00</div>
-        </div>
-      </div>
+        {/* Mobile Auth Buttons - Only visible on mobile */}
+        {isMobile && (
+          <div className="mobile-auth-buttons">
+            <button className="mobile-login-btn" onClick={handleLogin}>
+              <LoginIcon />
+              <span>Login</span>
+            </button>
+            <button className="mobile-signup-btn" onClick={handleSignup}>
+              <PersonAddIcon />
+              <span>Sign Up</span>
+            </button>
+          </div>
+        )}
 
-      {/* Main Navigation */}
-      <div className="sidebar-section main-nav">
-        <ul className="nav-list">
-          {mainNavLinks.map((item) => (
-            <li key={item.name} className="nav-item">
-              <Link 
-                to={item.link} 
-                className={`nav-link ${isActive(item.link) ? 'active' : ''}`}
-                onClick={isMobile ? closeMobileMenu : undefined}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                {item.name}
-                {item.badge && (
-                  <span className={`nav-badge ${item.badge.variant}`}>
-                    {item.badge.text}
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+        {/* User Status */}
+        <div className="user-status">
+          <div className="user-avatar">
+            <img src={ProfilePicture} alt="User" />
+            <span className="status-indicator online"></span>
+          </div>
+          <div className="user-info">
+            <div className="user-name">Player VIP</div>
+            <div className="user-balance">₱1,250.00</div>
+          </div>
+        </div>
 
-      {/* Game Categories */}
-      <div className="sidebar-section">
-        <h3 
-          className="sidebar-title" 
-          onClick={() => toggleSection('games')}
-        >
-          Game Categories
-          <span className="toggle-icon">
-            {collapsedSections.games ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-          </span>
-        </h3>
-        {!collapsedSections.games && (
-          <ul className="category-list">
-            {gameCategories.map((category) => (
-              <li key={category.name} className="category-item">
+        {/* Main Navigation */}
+        <div className="sidebar-section main-nav">
+          <ul className="nav-list">
+            {mainNavLinks.map((item) => (
+              <li key={item.name} className="nav-item">
                 <Link 
-                  to={category.link} 
-                  className={`category-link ${isActive(category.link) ? 'active' : ''}`}
+                  to={item.link} 
+                  className={`nav-link ${isActive(item.link) ? 'active' : ''}`}
                   onClick={isMobile ? closeMobileMenu : undefined}
                 >
-                  <span className="category-icon">{category.icon}</span>
-                  {category.name}
+                  <span className="nav-icon">{item.icon}</span>
+                  {item.name}
+                  {item.badge && (
+                    <span className={`nav-badge ${item.badge.variant}`}>
+                      {item.badge.text}
+                    </span>
+                  )}
                 </Link>
               </li>
             ))}
           </ul>
-        )}
-      </div>
+        </div>
 
-      <div className="sidebar-section">
-        <h3 
-          className="sidebar-title"
-          onClick={() => toggleSection('player')}
-        >
-          Player Area
-          <span className="toggle-icon">
-            {collapsedSections.player ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-          </span>
-        </h3>
-        {!collapsedSections.player && (
-          <ul className="quick-links">
-            {playerAreaLinks.map((link) => (
-              <li key={link.name}>
-                <Link 
-                  to={link.link} 
-                  className={`quick-link ${isActive(link.link) ? 'active' : ''}`}
-                  onClick={isMobile ? closeMobileMenu : undefined}
-                >
-                  <span className="quick-link-icon">{link.icon}</span>
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="sidebar-section">
-        <h3 
-          className="sidebar-title"
-          onClick={() => toggleSection('support')}
-        >
-          Support & Tools
-          <span className="toggle-icon">
-            {collapsedSections.support ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-          </span>
-        </h3>
-        {!collapsedSections.support && (
-          <ul className="quick-links">
-            {supportLinks.map((link) => (
-              <li key={link.name}>
-                {link.onClick ? (
-                  <div 
-                    className="quick-link" 
-                    onClick={() => {
-                      if (isMobile) closeMobileMenu();
-                      link.onClick?.();
-                    }}
+        {/* Game Categories */}
+        <div className="sidebar-section">
+          <h3 
+            className="sidebar-title" 
+            onClick={() => toggleSection('games')}
+          >
+            Game Categories
+            <span className="toggle-icon">
+              {collapsedSections.games ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+            </span>
+          </h3>
+          {!collapsedSections.games && (
+            <ul className="category-list">
+              {gameCategories.map((category) => (
+                <li key={category.name} className="category-item">
+                  <Link 
+                    to={category.link} 
+                    className={`category-link ${isActive(category.link) ? 'active' : ''}`}
+                    onClick={isMobile ? closeMobileMenu : undefined}
                   >
-                    <span className="quick-link-icon">{link.icon}</span>
-                    {link.name}
-                  </div>
-                ) : (
+                    <span className="category-icon">{category.icon}</span>
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="sidebar-section">
+          <h3 
+            className="sidebar-title"
+            onClick={() => toggleSection('player')}
+          >
+            Player Area
+            <span className="toggle-icon">
+              {collapsedSections.player ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+            </span>
+          </h3>
+          {!collapsedSections.player && (
+            <ul className="quick-links">
+              {playerAreaLinks.map((link) => (
+                <li key={link.name}>
                   <Link 
                     to={link.link} 
                     className={`quick-link ${isActive(link.link) ? 'active' : ''}`}
@@ -298,28 +303,77 @@ const Sidebar: React.FC = () => {
                     <span className="quick-link-icon">{link.icon}</span>
                     {link.name}
                   </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* Refer & Earn Section */}
-      <div className="refer-earn-container">
-        <div className="refer-earn-section">
-          <div className="refer-earn-header">
-            <ShareIcon />
-            <span>Refer & Earn</span>
-          </div>
-          <p className="refer-earn-text">Get 50% commission on all referred players!</p>
-          <button className="refer-earn-button" onClick={handleShare}>
-            <ShareIcon />
-            Share & Earn Now
-          </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </div>
-    </aside>
+
+        <div className="sidebar-section">
+          <h3 
+            className="sidebar-title"
+            onClick={() => toggleSection('support')}
+          >
+            Support & Tools
+            <span className="toggle-icon">
+              {collapsedSections.support ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+            </span>
+          </h3>
+          {!collapsedSections.support && (
+            <ul className="quick-links">
+              {supportLinks.map((link) => (
+                <li key={link.name}>
+                  {link.onClick ? (
+                    <div 
+                      className="quick-link" 
+                      onClick={() => {
+                        if (isMobile) closeMobileMenu();
+                        link.onClick?.();
+                      }}
+                    >
+                      <span className="quick-link-icon">{link.icon}</span>
+                      {link.name}
+                    </div>
+                  ) : (
+                    <Link 
+                      to={link.link} 
+                      className={`quick-link ${isActive(link.link) ? 'active' : ''}`}
+                      onClick={isMobile ? closeMobileMenu : undefined}
+                    >
+                      <span className="quick-link-icon">{link.icon}</span>
+                      {link.name}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Refer & Earn Section */}
+        <div className="refer-earn-container">
+          <div className="refer-earn-section">
+            <div className="refer-earn-header">
+              <ShareIcon />
+              <span>Refer & Earn</span>
+            </div>
+            <p className="refer-earn-text">Get 50% commission on all referred players!</p>
+            <button className="refer-earn-button" onClick={handleShare}>
+              <ShareIcon />
+              Share & Earn Now
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Auth Modals */}
+      {showAuth && (
+        <AuthModals
+          initialModal={initialModal}
+          onClose={closeAuth}
+        />
+      )}
+    </>
   );
 };
 

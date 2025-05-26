@@ -9,7 +9,6 @@ import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import TableBarIcon from '@mui/icons-material/TableBar';
 import StreamIcon from '@mui/icons-material/Stream';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
-import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -165,11 +164,8 @@ const Header: React.FC = () => {
             </div>
 
             <div className="user-actions">
-              <Link to="/account" className="account-link">
-                <PersonIcon />
-              </Link>
-              <button className="btn btn-text" onClick={handleLogin}>Log In</button>
-              <button className="btn btn-primary" onClick={handleSignup}>Sign Up</button>
+              <button className="btn btn-text desktop-only" onClick={handleLogin}>Log In</button>
+              <button className="btn btn-primary desktop-only" onClick={handleSignup}>Sign Up</button>
             </div>
 
             <button className="mobile-menu-toggle" onClick={toggleMenu}>
