@@ -152,6 +152,11 @@ const Header: React.FC = () => {
 
           {/* Right section with search and actions */}
           <div className="right-section">
+            <div className="user-actions">
+              <button className="btn btn-text desktop-only" onClick={handleLogin}>Log In</button>
+              <button className="btn btn-primary desktop-only" onClick={handleSignup}>Sign Up</button>
+            </div>
+
             <div className={`search-toggle ${isSearchOpen ? 'active' : ''}`}>
               <button className="search-icon-btn" onClick={toggleSearch}>
                 <SearchIcon />
@@ -161,11 +166,6 @@ const Header: React.FC = () => {
                 <input type="text" placeholder="Search games..." className="search-input" />
                 <button className="search-button">Search</button>
               </div>
-            </div>
-
-            <div className="user-actions">
-              <button className="btn btn-text desktop-only" onClick={handleLogin}>Log In</button>
-              <button className="btn btn-primary desktop-only" onClick={handleSignup}>Sign Up</button>
             </div>
 
             <button className="mobile-menu-toggle" onClick={toggleMenu}>

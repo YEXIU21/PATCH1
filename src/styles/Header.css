@@ -17,7 +17,7 @@
   width: 100%;
   max-width: 95%;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 0 20px;
   position: relative;
   min-height: 60px;
 }
@@ -27,6 +27,8 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  padding-left: 15px;
+  min-width: 100px;
 }
 
 .vip-logo-container {
@@ -94,8 +96,10 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  padding: 0 20px;
+  padding: 0 15px;
   text-align: center;
+  width: auto;
+  pointer-events: auto;
 }
 
 .center-logo-link {
@@ -122,14 +126,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 20px;
+  gap: 15px;
   flex-shrink: 0;
-  min-width: 200px;
+  min-width: 170px;
+  padding-right: 25px;
 }
 
 /* Search Toggle Styles */
 .search-toggle {
   position: relative;
+  margin-right: 15px;
 }
 
 .search-icon-btn {
@@ -270,20 +276,17 @@
 }
 
 .mobile-menu-toggle {
-  display: none; /* Hide by default */
-  background: transparent;
+  background: none;
   border: none;
-  cursor: pointer;
   color: var(--text-secondary);
-  transition: var(--transition);
-  padding: 8px;
-  height: 44px;
-  width: 44px;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
   border-radius: 50%;
-  position: relative;
-  margin: 0;
+  margin-left: 10px;
+  transition: all 0.3s ease;
 }
 
 .mobile-menu-toggle:hover {
@@ -434,13 +437,15 @@
   }
   
   .header-container {
-    padding: 0 15px;
+    padding: 0 18px;
     min-height: 60px;
     gap: 10px;
+    position: relative;
   }
 
   .left-section {
-    padding-left: 15px;
+    padding-left: 12px;
+    min-width: auto;
   }
 
   .vip-logo-container {
@@ -466,14 +471,37 @@
 
   .right-section {
     margin-right: 0;
-    padding-right: 5px;
-    gap: 12px;
+    padding-right: 0;
+    gap: 10px;
+    min-width: auto;
+    justify-content: flex-end;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .mobile-menu-toggle {
     display: flex;
-    margin: 0;
-    padding: 10px;
+    margin-left: 10px;
+    padding: 8px;
+    order: 2; /* Ensures hamburger appears after search icon */
+    background-color: transparent;
+  }
+  
+  .search-toggle {
+    order: 1; /* Ensures search icon appears before hamburger */
+    margin-right: 0;
+  }
+
+  .search-icon-btn {
+    padding: 8px;
+    background-color: transparent;
+  }
+
+  .mobile-menu-toggle svg, 
+  .search-icon-btn svg {
+    font-size: 24px;
   }
 
   .mobile-search-container {
@@ -493,15 +521,24 @@
     padding: 0 15px;
     font-size: 14px;
   }
+
+  .center-section {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 5px;
+    width: auto;
+  }
 }
 
 @media (max-width: 480px) {
   .header-container {
-    padding: 0 10px;
+    padding: 0 12px;
+    justify-content: space-between;
   }
 
   .left-section {
-    padding-left: 5px;
+    padding-left: 10px;
   }
 
   .vip-logo-container {
@@ -540,20 +577,36 @@
   }
 
   .right-section {
-    padding-right: 2px;
-    gap: 8px;
+    padding-right: 0;
+    gap: 3px;
+    min-width: auto;
+    justify-content: flex-end;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .mobile-menu-toggle {
     height: 40px;
     width: 40px;
     padding: 8px;
+    margin: 0 0 0 5px;
   }
 
-  .mobile-menu-toggle svg {
+  .mobile-menu-toggle svg, 
+  .search-icon-btn svg {
     font-size: 22px;
     width: 22px;
     height: 22px;
+  }
+
+  .center-section {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 5px;
+    width: auto;
   }
 }
 
@@ -567,6 +620,44 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
   animation: fadeIn 0.2s ease;
+}
+
+/* Extra small screen adjustment */
+@media (max-width: 360px) {
+  .header-container {
+    padding: 0 5px;
+  }
+  
+  .left-section {
+    padding-left: 5px;
+  }
+  
+  .right-section {
+    padding-right: 0;
+    gap: 2px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .center-logo-text {
+    font-size: 18px;
+  }
+  
+  .mobile-menu-toggle {
+    height: 36px;
+    width: 36px;
+    padding: 6px;
+    margin: 0 0 0 4px;
+  }
+  
+  .mobile-menu-toggle svg,
+  .search-icon-btn svg {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 @keyframes fadeIn {
