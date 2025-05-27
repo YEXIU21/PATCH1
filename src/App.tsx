@@ -49,6 +49,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar';
 import ConsentPopup from './components/ConsentPopup';
+import SplashScreen from './components/SplashScreen';
 
 // Context
 import { ConsentProvider, useConsent } from './contexts/ConsentContext';
@@ -157,6 +158,7 @@ const AdminAgentManagement = () => {
 const AppContent = () => {
   const { showConsentPopup, setShowConsentPopup, setHasConsented } = useConsent();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showSplash, setShowSplash] = useState(true);
   const location = useLocation();
 
   // Check if the current route is an auth page or admin page
@@ -182,6 +184,15 @@ const AppContent = () => {
     // Redirect to another site or close the window
     window.location.href = 'https://www.google.com';
   };
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
+
+  // If splash screen is showing, only render that
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
 
   // Don't render the standard layout for admin pages
   if (isAdminPage) {
