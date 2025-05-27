@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../App.css';
 import '../styles/AdminDashboard.css';
 import '../styles/PaymentSettings.css';
 
@@ -29,7 +30,11 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Chip
+  Chip,
+  ThemeProvider,
+  createTheme,
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 // Import icons
@@ -42,6 +47,42 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SecurityIcon from '@mui/icons-material/Security';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SaveIcon from '@mui/icons-material/Save';
+
+// Create theme matching the global app theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#5047e5',
+      light: 'rgba(80, 71, 229, 0.1)',
+    },
+    secondary: {
+      main: '#21262d',
+    },
+    background: {
+      default: '#0d1117',
+      paper: '#161b22',
+    },
+    text: {
+      primary: '#e6edf3',
+      secondary: '#c9d1d9',
+    },
+    error: {
+      main: '#ff4757',
+    },
+    success: {
+      main: '#3fb950',
+    },
+    warning: {
+      main: '#f7b955',
+    },
+  },
+});
+
+// Custom card header styles
+const cardHeaderStyle = {
+  backgroundColor: '#5047e5',
+  color: '#e6edf3',
+};
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -99,284 +140,356 @@ const PaymentSettings: React.FC = () => {
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [maxLoginAttempts, setMaxLoginAttempts] = useState(5);
   
+  // Notification states
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
+  
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
   const handleToggleStatus = (id: string) => {
-    setPaymentMethods(methods => 
-      methods.map(method => 
-        method.id === id ? { ...method, status: !method.status } : method
-      )
-    );
+    try {
+      setPaymentMethods(methods => 
+        methods.map(method => 
+          method.id === id ? { ...method, status: !method.status } : method
+        )
+      );
+    } catch (error) {
+      setNotificationMessage('Failed to update payment method status');
+      setNotificationType('error');
+      setShowNotification(true);
+      console.error('Error toggling payment method status:', error);
+    }
   };
 
   const handleSaveSettings = () => {
-    // In a real app, this would save the settings to a database
-    alert('Payment settings saved successfully!');
+    try {
+      // In a real app, this would save the settings to a database
+      setNotificationMessage('Payment settings saved successfully!');
+      setNotificationType('success');
+      setShowNotification(true);
+    } catch (error) {
+      setNotificationMessage('Failed to save settings');
+      setNotificationType('error');
+      setShowNotification(true);
+      console.error('Error saving settings:', error);
+    }
+  };
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
   };
 
   return (
-    <div className="admin-dashboard">
-      <h1>Payment Settings</h1>
-      <p className="section-description">Manage payment methods, currencies, and transaction settings</p>
-      
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange} 
-          aria-label="payment settings tabs"
-          variant="fullWidth"
-        >
-          <Tab icon={<PaymentIcon />} label="PAYMENT METHODS" />
-          <Tab icon={<SettingsIcon />} label="GENERAL SETTINGS" />
-          <Tab icon={<SecurityIcon />} label="SECURITY" />
-        </Tabs>
-      </Box>
-      
-      <TabPanel value={tabValue} index={0}>
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            startIcon={<AddCircleOutlineIcon />}
+    <ThemeProvider theme={theme}>
+      <div className="admin-dashboard">
+        <h1>Payment Settings</h1>
+        <p className="section-description">Manage payment methods, currencies, and transaction settings</p>
+        
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange} 
+            aria-label="payment settings tabs"
+            variant="fullWidth"
+            textColor="primary"
+            indicatorColor="primary"
           >
-            Add Payment Method
-          </Button>
+            <Tab icon={<PaymentIcon />} label="PAYMENT METHODS" />
+            <Tab icon={<SettingsIcon />} label="GENERAL SETTINGS" />
+            <Tab icon={<SecurityIcon />} label="SECURITY" />
+          </Tabs>
         </Box>
         
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Fee (%)</TableCell>
-                <TableCell>Min Amount</TableCell>
-                <TableCell>Max Amount</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paymentMethods.map((method) => (
-                <TableRow key={method.id}>
-                  <TableCell>{method.name}</TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={method.type.charAt(0).toUpperCase() + method.type.slice(1)} 
-                      color={
-                        method.type === 'card' ? 'primary' :
-                        method.type === 'bank' ? 'secondary' :
-                        method.type === 'digital' ? 'info' : 'success'
-                      }
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{method.fee}%</TableCell>
-                  <TableCell>₱{method.minAmount}</TableCell>
-                  <TableCell>₱{method.maxAmount}</TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Switch 
-                          checked={method.status} 
-                          onChange={() => handleToggleStatus(method.id)}
-                          color="primary"
-                        />
-                      }
-                      label={method.status ? "Active" : "Inactive"}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton size="small" color="primary">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton size="small" color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </TabPanel>
-      
-      <TabPanel value={tabValue} index={1}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="Currency Settings" />
-              <Divider />
-              <CardContent>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Default Currency</InputLabel>
-                  <Select
-                    value={defaultCurrency}
-                    label="Default Currency"
-                    onChange={(e) => setDefaultCurrency(e.target.value)}
-                  >
-                    <MenuItem value="PHP">Philippine Peso (₱)</MenuItem>
-                    <MenuItem value="USD">US Dollar ($)</MenuItem>
-                    <MenuItem value="EUR">Euro (€)</MenuItem>
-                    <MenuItem value="GBP">British Pound (£)</MenuItem>
-                  </Select>
-                </FormControl>
-                
-                <Box sx={{ mt: 2 }}>
-                  <FormControlLabel
-                    control={
-                      <Switch 
-                        checked={true}
-                        color="primary"
-                      />
-                    }
-                    label="Allow multiple currencies"
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+        <TabPanel value={tabValue} index={0}>
+          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+            <button className="add-button">
+              <AddCircleOutlineIcon /> Add Payment Method
+            </button>
+          </Box>
           
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="Transaction Limits" />
-              <Divider />
-              <CardContent>
-                <TextField
-                  fullWidth
-                  label="Maximum Withdrawal (per day)"
-                  type="number"
-                  value={withdrawalLimit}
-                  onChange={(e) => setWithdrawalLimit(Number(e.target.value))}
-                  InputProps={{
-                    startAdornment: <Typography sx={{ mr: 1 }}>₱</Typography>,
-                  }}
-                  margin="normal"
-                />
+          <TableContainer component={Paper} className="table-container">
+            <Table className="data-table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Fee (%)</TableCell>
+                  <TableCell>Min Amount</TableCell>
+                  <TableCell>Max Amount</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paymentMethods.map((method) => (
+                  <TableRow key={method.id}>
+                    <TableCell>{method.name}</TableCell>
+                    <TableCell>
+                      <span className={`status ${method.type.toLowerCase()}`}>
+                        {method.type.charAt(0).toUpperCase() + method.type.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell>{method.fee}%</TableCell>
+                    <TableCell>₱{method.minAmount}</TableCell>
+                    <TableCell>₱{method.maxAmount}</TableCell>
+                    <TableCell>
+                      <span 
+                        className={`status ${method.status ? 'active' : 'inactive'}`}
+                        onClick={() => handleToggleStatus(method.id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {method.status ? "Active" : "Inactive"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="action-buttons">
+                        <button className="action-btn edit-btn">
+                          <EditIcon />
+                        </button>
+                        <button className="action-btn delete-btn">
+                          <DeleteIcon />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+        
+        <TabPanel value={tabValue} index={1}>
+          <div className="settings-grid">
+            <div className="settings-card">
+              <div className="settings-card-header">
+                <h3>Currency Settings</h3>
+              </div>
+              <div className="settings-card-content">
+                <div className="form-group">
+                  <label>Default Currency</label>
+                  <select 
+                    value={defaultCurrency}
+                    onChange={(e) => setDefaultCurrency(e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="PHP">Philippine Peso (₱)</option>
+                    <option value="USD">US Dollar ($)</option>
+                    <option value="EUR">Euro (€)</option>
+                    <option value="GBP">British Pound (£)</option>
+                  </select>
+                </div>
                 
-                <TextField
-                  fullWidth
-                  label="Maximum Deposit (per transaction)"
-                  type="number"
-                  value={depositLimit}
-                  onChange={(e) => setDepositLimit(Number(e.target.value))}
-                  InputProps={{
-                    startAdornment: <Typography sx={{ mr: 1 }}>₱</Typography>,
-                  }}
-                  margin="normal"
-                />
+                <div className="toggle-group">
+                  <div className="toggle-switch-container">
+                    <label className="toggle-switch-label">
+                      <input 
+                        type="checkbox" 
+                        checked={true}
+                        onChange={() => {}}
+                        className="toggle-switch-input"
+                      />
+                      <span className="toggle-switch-ui"></span>
+                    </label>
+                  </div>
+                  <span className="toggle-switch-text">Allow multiple currencies</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="settings-card">
+              <div className="settings-card-header">
+                <h3>Transaction Limits</h3>
+              </div>
+              <div className="settings-card-content">
+                <div className="form-group">
+                  <label>Maximum Withdrawal (per day)</label>
+                  <div className="input-with-prefix">
+                    <span className="input-prefix">₱</span>
+                    <input
+                      type="number"
+                      value={withdrawalLimit}
+                      onChange={(e) => setWithdrawalLimit(Number(e.target.value))}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
                 
-                <Box sx={{ mt: 2 }}>
-                  <FormControlLabel
-                    control={
-                      <Switch 
+                <div className="form-group">
+                  <label>Maximum Deposit (per transaction)</label>
+                  <div className="input-with-prefix">
+                    <span className="input-prefix">₱</span>
+                    <input
+                      type="number"
+                      value={depositLimit}
+                      onChange={(e) => setDepositLimit(Number(e.target.value))}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+                
+                <div className="toggle-group">
+                  <div className="toggle-switch-container">
+                    <label className="toggle-switch-label">
+                      <input 
+                        type="checkbox" 
                         checked={autoApproveWithdrawals}
                         onChange={(e) => setAutoApproveWithdrawals(e.target.checked)}
-                        color="primary"
+                        className="toggle-switch-input"
                       />
-                    }
-                    label="Auto-approve withdrawals under ₱1,000"
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </TabPanel>
-      
-      <TabPanel value={tabValue} index={2}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="KYC Verification" />
-              <Divider />
-              <CardContent>
-                <FormControlLabel
-                  control={
-                    <Switch 
-                      checked={requireKYC}
-                      onChange={(e) => setRequireKYC(e.target.checked)}
-                      color="primary"
+                      <span className="toggle-switch-ui"></span>
+                    </label>
+                  </div>
+                  <span className="toggle-switch-text">Auto-approve withdrawals under ₱1,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+        
+        <TabPanel value={tabValue} index={2}>
+          <div className="settings-grid">
+            <div className="settings-card">
+              <div className="settings-card-header">
+                <h3>KYC Verification</h3>
+              </div>
+              <div className="settings-card-content">
+                <div className="toggle-group">
+                  <div className="toggle-switch-container">
+                    <label className="toggle-switch-label">
+                      <input 
+                        type="checkbox" 
+                        checked={requireKYC}
+                        onChange={(e) => setRequireKYC(e.target.checked)}
+                        className="toggle-switch-input"
+                      />
+                      <span className="toggle-switch-ui"></span>
+                    </label>
+                  </div>
+                  <span className="toggle-switch-text">Require KYC for withdrawals</span>
+                </div>
+                
+                <div className="section-subheader">
+                  <h4>KYC Level Requirements</h4>
+                </div>
+                
+                <div className="toggle-list">
+                  <div className="toggle-group">
+                    <div className="toggle-switch-container">
+                      <label className="toggle-switch-label">
+                        <input 
+                          type="checkbox" 
+                          defaultChecked={true}
+                          className="toggle-switch-input"
+                        />
+                        <span className="toggle-switch-ui"></span>
+                      </label>
+                    </div>
+                    <span className="toggle-switch-text">Level 1: ID Verification</span>
+                  </div>
+                  
+                  <div className="toggle-group">
+                    <div className="toggle-switch-container">
+                      <label className="toggle-switch-label">
+                        <input 
+                          type="checkbox" 
+                          defaultChecked={true}
+                          className="toggle-switch-input"
+                        />
+                        <span className="toggle-switch-ui"></span>
+                      </label>
+                    </div>
+                    <span className="toggle-switch-text">Level 2: Address Verification</span>
+                  </div>
+                  
+                  <div className="toggle-group">
+                    <div className="toggle-switch-container">
+                      <label className="toggle-switch-label">
+                        <input 
+                          type="checkbox" 
+                          defaultChecked={true}
+                          className="toggle-switch-input"
+                        />
+                        <span className="toggle-switch-ui"></span>
+                      </label>
+                    </div>
+                    <span className="toggle-switch-text">Level 3: Income Verification</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="settings-card">
+              <div className="settings-card-header">
+                <h3>Authentication Settings</h3>
+              </div>
+              <div className="settings-card-content">
+                <div className="toggle-group">
+                  <div className="toggle-switch-container">
+                    <label className="toggle-switch-label">
+                      <input 
+                        type="checkbox" 
+                        checked={twoFactorAuth}
+                        onChange={(e) => setTwoFactorAuth(e.target.checked)}
+                        className="toggle-switch-input"
+                      />
+                      <span className="toggle-switch-ui"></span>
+                    </label>
+                  </div>
+                  <span className="toggle-switch-text">Enable 2FA for withdrawals</span>
+                </div>
+                
+                <div className="form-group horizontal-form-group">
+                  <label>Maximum Login Attempts</label>
+                  <div className="input-with-prefix">
+                    <span className="input-prefix">#</span>
+                    <input
+                      type="number"
+                      value={maxLoginAttempts}
+                      onChange={(e) => setMaxLoginAttempts(Number(e.target.value))}
+                      className="form-input"
                     />
-                  }
-                  label="Require KYC for withdrawals"
-                />
+                  </div>
+                </div>
                 
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2" gutterBottom>
-                    KYC Level Requirements
-                  </Typography>
-                  
-                  <FormControlLabel
-                    control={<Switch defaultChecked color="primary" />}
-                    label="Level 1: ID Verification"
-                  />
-                  
-                  <FormControlLabel
-                    control={<Switch defaultChecked color="primary" />}
-                    label="Level 2: Address Verification"
-                  />
-                  
-                  <FormControlLabel
-                    control={<Switch defaultChecked color="primary" />}
-                    label="Level 3: Income Verification"
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="Authentication Settings" />
-              <Divider />
-              <CardContent>
-                <FormControlLabel
-                  control={
-                    <Switch 
-                      checked={twoFactorAuth}
-                      onChange={(e) => setTwoFactorAuth(e.target.checked)}
-                      color="primary"
-                    />
-                  }
-                  label="Enable 2FA for withdrawals"
-                />
-                
-                <TextField
-                  fullWidth
-                  label="Maximum Login Attempts"
-                  type="number"
-                  value={maxLoginAttempts}
-                  onChange={(e) => setMaxLoginAttempts(Number(e.target.value))}
-                  margin="normal"
-                />
-                
-                <Box sx={{ mt: 2 }}>
-                  <FormControlLabel
-                    control={<Switch defaultChecked color="primary" />}
-                    label="Email notification for large transactions"
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </TabPanel>
-      
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<SaveIcon />}
-          onClick={handleSaveSettings}
-          size="large"
+                <div className="toggle-group">
+                  <div className="toggle-switch-container">
+                    <label className="toggle-switch-label">
+                      <input 
+                        type="checkbox" 
+                        defaultChecked={true}
+                        className="toggle-switch-input"
+                      />
+                      <span className="toggle-switch-ui"></span>
+                    </label>
+                  </div>
+                  <span className="toggle-switch-text">Email notification for large transactions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+        
+        <div className="button-container">
+          <button className="save-button" onClick={handleSaveSettings}>
+            <SaveIcon /> Save Settings
+          </button>
+        </div>
+        
+        <Snackbar 
+          open={showNotification} 
+          autoHideDuration={6000} 
+          onClose={handleCloseNotification}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          Save Settings
-        </Button>
-      </Box>
-    </div>
+          <Alert onClose={handleCloseNotification} severity={notificationType} sx={{ width: '100%' }}>
+            {notificationMessage}
+          </Alert>
+        </Snackbar>
+      </div>
+    </ThemeProvider>
   );
 };
 
