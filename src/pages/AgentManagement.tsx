@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Typography,
-  Paper,
   Box,
   Tabs,
   Tab,
@@ -23,11 +22,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Card,
-  CardContent,
-  Alert,
-  Tooltip,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Avatar
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -39,6 +35,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import SortIcon from '@mui/icons-material/Sort';
+import PersonIcon from '@mui/icons-material/Person';
+import MenuIcon from '@mui/icons-material/Menu';
 import '../styles/AgentManagement.css';
 
 interface TabPanelProps {
@@ -59,7 +60,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box>
           {children}
         </Box>
       )}
@@ -94,6 +95,10 @@ const AgentManagement = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showSuccess, setShowSuccess] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterLevel, setFilterLevel] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -253,14 +258,17 @@ const AgentManagement = () => {
     }
   ];
 
-  // Mock data for commission history
-  const commissionHistory = [
-    { id: 'CM001', agent: 'masteragent1', amount: 5000, date: '2023-06-15', status: 'paid' },
-    { id: 'CM002', agent: 'agent2', amount: 2500, date: '2023-06-15', status: 'paid' },
-    { id: 'CM003', agent: 'masteragent1', amount: 3000, date: '2023-06-01', status: 'paid' },
-    { id: 'CM004', agent: 'agent2', amount: 1500, date: '2023-06-01', status: 'paid' },
-    { id: 'CM005', agent: 'agent4', amount: 1000, date: '2023-06-01', status: 'paid' }
-  ];
+  // Filter agents
+  const filteredAgents = agents.filter(agent => {
+    const matchesSearch = 
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLevel = filterLevel ? agent.level === filterLevel : true;
+    const matchesStatus = filterStatus ? agent.status === filterStatus : true;
+    
+    return matchesSearch && matchesLevel && matchesStatus;
+  });
 
   // Mock data for agent statistics
   const agentStats = {
@@ -273,219 +281,227 @@ const AgentManagement = () => {
   };
 
   return (
-    <div className="agent-management-container">
-      <Paper elevation={3} className="agent-management-paper">
-        <Box className="agent-management-header">
-          <GroupIcon className="agent-management-icon" />
-          <Typography variant="h4" component="h1" className="agent-management-title">
-            Agent Management
-          </Typography>
-        </Box>
+    <div className="agent-page">
+      {/* Header */}
+      <div className="agent-header-bar">
+        <div className="agent-header-left">
+          <MenuIcon className="menu-icon" />
+          <div className="agent-title">
+            <GroupIcon />
+            <span>Agent Management</span>
+          </div>
+          <div className="agent-subtitle">Casino Management System</div>
+        </div>
+        <div className="agent-header-right">
+          <div className="notification-icon">
+            <div className="notification-badge">2</div>
+          </div>
+          <div className="search-icon">
+            <SearchIcon />
+          </div>
+          <div className="admin-avatar">
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
 
-        {showSuccess && (
-          <Alert severity="success" className="success-alert">
-            Agent has been added successfully!
-          </Alert>
+      {/* Main Content */}
+      <div className="agent-content">
+        <div className="agent-content-header">
+          <h1>Agent Management</h1>
+          <p>Manage agents, sub-agents, and commission structures</p>
+        </div>
+
+        <div className="agent-actions-bar">
+          <div className="search-container">
+            <SearchIcon />
+            <input 
+              type="text" 
+              placeholder="Search agents..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          <div className="action-buttons">
+            <button 
+              className="filter-btn"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <FilterListIcon /> Filters
+            </button>
+            
+            <button 
+              className="add-agent-btn"
+            onClick={handleOpenAddDialog}
+            >
+              <PersonAddIcon /> Add New Agent
+            </button>
+          </div>
+        </div>
+
+        {showFilters && (
+          <div className="filters-panel">
+            <div className="filter-group">
+              <label>Level</label>
+              <select 
+                value={filterLevel}
+                onChange={(e) => setFilterLevel(e.target.value)}
+              >
+                <option value="">All Levels</option>
+                <option value="Master Agent">Master Agent</option>
+                <option value="Sub-Agent">Sub-Agent</option>
+              </select>
+            </div>
+            
+            <div className="filter-group">
+              <label>Status</label>
+              <select 
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+            
+            <button 
+              className="clear-filter-btn"
+              onClick={() => {
+                setFilterLevel('');
+                setFilterStatus('');
+              }}
+            >
+              Clear Filters
+            </button>
+          </div>
         )}
 
-        <Box className="stats-section">
-          <Grid container spacing={3}>
-            <Grid xs={12} md={4}>
-              <Card className="stat-card">
-                <CardContent>
-                  <Box className="stat-header">
-                    <PeopleAltIcon className="stat-icon" />
-                    <Typography variant="h6">Agents</Typography>
-                  </Box>
-                  <Typography variant="h3" className="stat-value">{agentStats.totalAgents}</Typography>
-                  <Box className="stat-details">
-                    <Chip 
-                      label={`${agentStats.activeAgents} Active`} 
-                      size="small" 
-                      color="success" 
-                      className="stat-chip"
-                    />
-                    <Chip 
-                      label={`${agentStats.pendingAgents} Pending`} 
-                      size="small" 
-                      color="warning" 
-                      className="stat-chip"
-                    />
-                    <Chip 
-                      label={`${agentStats.suspendedAgents} Suspended`} 
-                      size="small" 
-                      color="error" 
-                      className="stat-chip"
-                    />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid xs={12} md={4}>
-              <Card className="stat-card">
-                <CardContent>
-                  <Box className="stat-header">
-                    <GroupIcon className="stat-icon" />
-                    <Typography variant="h6">Total Players</Typography>
-                  </Box>
-                  <Typography variant="h3" className="stat-value">{agentStats.totalPlayers}</Typography>
-                  <Typography variant="body2" className="stat-subtitle">
-                    Across all agents
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid xs={12} md={4}>
-              <Card className="stat-card">
-                <CardContent>
-                  <Box className="stat-header">
-                    <AccountBalanceWalletIcon className="stat-icon" />
-                    <Typography variant="h6">Total Commission</Typography>
-                  </Box>
-                  <Typography variant="h3" className="stat-value">₱{agentStats.totalCommission.toLocaleString()}</Typography>
-                  <Typography variant="body2" className="stat-subtitle">
-                    Paid out to agents
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
+        <div className="stats-cards">
+          <div className="stat-card">
+            <div className="stat-icon agents-icon">
+              <GroupIcon />
+            </div>
+            <div className="stat-content">
+              <h2>Agents</h2>
+              <div className="stat-number">{agentStats.totalAgents}</div>
+              <div className="stat-badges">
+                <span className="badge active">{agentStats.activeAgents} Active</span>
+                <span className="badge pending">{agentStats.pendingAgents} Pending</span>
+                <span className="badge suspended">{agentStats.suspendedAgents} Suspended</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon players-icon">
+              <PeopleAltIcon />
+            </div>
+            <div className="stat-content">
+              <h2>Total Players</h2>
+              <div className="stat-number">{agentStats.totalPlayers}</div>
+              <div className="stat-subtitle">Across all agents</div>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon commission-icon">
+              <AccountBalanceWalletIcon />
+            </div>
+            <div className="stat-content">
+              <h2>Total Commission</h2>
+              <div className="stat-number">₱{agentStats.totalCommission.toLocaleString()}</div>
+              <div className="stat-subtitle">Paid out to agents</div>
+            </div>
+          </div>
+        </div>
 
-        <Box className="agent-actions">
-          <Button
-            variant="contained"
-            startIcon={<PersonAddIcon />}
-            onClick={handleOpenAddDialog}
-            className="add-agent-button"
-          >
-            Add New Agent
-          </Button>
-        </Box>
+        <div className="tabs-section">
+          <div className="tab-header agents-tab active">
+            <GroupIcon />
+            <span>AGENTS</span>
+          </div>
+        </div>
 
-        <Box className="agent-tabs-container">
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="agent management tabs"
-            className="agent-tabs"
-            variant="fullWidth"
-          >
-            <Tab icon={<GroupIcon />} label="Agents" id="agent-tab-0" />
-            <Tab icon={<TrendingUpIcon />} label="Commission" id="agent-tab-1" />
-          </Tabs>
-
-          <TabPanel value={tabValue} index={0}>
-            <TableContainer>
-              <Table className="agents-table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Username</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Level</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Players</TableCell>
-                    <TableCell>Commission</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {agents.map((agent) => (
-                    <TableRow key={agent.id}>
-                      <TableCell>{agent.id}</TableCell>
-                      <TableCell>{agent.username}</TableCell>
-                      <TableCell>{agent.name}</TableCell>
-                      <TableCell>{agent.level}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
-                          color={
-                            agent.status === 'active'
-                              ? 'success'
-                              : agent.status === 'pending'
-                              ? 'warning'
-                              : 'error'
-                          }
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>{agent.players}</TableCell>
-                      <TableCell>{agent.commission}%</TableCell>
-                      <TableCell>
-                        <Box className="action-buttons">
-                          <Tooltip title="View Details">
-                            <IconButton
-                              size="small"
-                              onClick={() => handleOpenViewDialog(agent)}
-                              color="primary"
-                            >
-                              <VisibilityIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Edit Agent">
-                            <IconButton size="small" color="primary">
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title={agent.status === 'active' ? 'Suspend Agent' : 'Activate Agent'}>
-                            <IconButton
-                              size="small"
-                              color={agent.status === 'active' ? 'error' : 'success'}
-                            >
-                              {agent.status === 'active' ? (
-                                <BlockIcon fontSize="small" />
-                              ) : (
-                                <CheckCircleIcon fontSize="small" />
-                              )}
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </TabPanel>
-
-          <TabPanel value={tabValue} index={1}>
-            <TableContainer>
-              <Table className="commission-table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Agent</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {commissionHistory.map((commission) => (
-                    <TableRow key={commission.id}>
-                      <TableCell>{commission.id}</TableCell>
-                      <TableCell>{commission.agent}</TableCell>
-                      <TableCell>₱{commission.amount.toLocaleString()}</TableCell>
-                      <TableCell>{commission.date}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={commission.status.charAt(0).toUpperCase() + commission.status.slice(1)}
-                          color={commission.status === 'paid' ? 'success' : 'warning'}
-                          size="small"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </TabPanel>
-        </Box>
-      </Paper>
+        <div className="agents-table-container">
+          <table className="agents-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Status</th>
+                <th>Players</th>
+                <th>Commission</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAgents.map((agent) => (
+                <tr key={agent.id}>
+                  <td>{agent.username}</td>
+                  <td>
+                    <div className="agent-name-cell">
+                      <div className="agent-avatar">
+                        <PersonIcon />
+                      </div>
+                      <div className="agent-info">
+                        <div className="agent-name">{agent.name}</div>
+                        <div className="agent-email">{agent.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className={`level-badge ${agent.level === 'Master Agent' ? 'master' : 'sub'}`}>
+                      {agent.level}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={`status-badge ${agent.status}`}>
+                      {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="players-cell">
+                      <GroupIcon /> {agent.players}
+                    </div>
+                  </td>
+                  <td>{agent.commission}%</td>
+                  <td>
+                    <div className="action-icons">
+                      <button onClick={() => handleOpenViewDialog(agent)} className="view-btn">
+                        <VisibilityIcon />
+                      </button>
+                      <button className="edit-btn">
+                        <EditIcon />
+                      </button>
+                      <button className={`status-toggle-btn ${agent.status === 'active' ? 'suspend' : 'activate'}`}>
+                        {agent.status === 'active' ? <BlockIcon /> : <CheckCircleIcon />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add Agent Dialog */}
-      <Dialog open={openAddDialog} onClose={handleCloseAddDialog} maxWidth="md" fullWidth>
+      <Dialog 
+        open={openAddDialog} 
+        onClose={handleCloseAddDialog} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: '#1e2130',
+            color: '#e6edf3'
+          }
+        }}
+      >
         <DialogTitle>Add New Agent</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
@@ -499,6 +515,12 @@ const AgentManagement = () => {
                 error={!!errors.username}
                 helperText={errors.username}
                 margin="normal"
+                InputLabelProps={{
+                  style: { color: '#8b949e' }
+                }}
+                InputProps={{
+                  style: { color: '#e6edf3' }
+                }}
               />
             </Grid>
             <Grid xs={12} md={6}>
@@ -511,6 +533,12 @@ const AgentManagement = () => {
                 error={!!errors.name}
                 helperText={errors.name}
                 margin="normal"
+                InputLabelProps={{
+                  style: { color: '#8b949e' }
+                }}
+                InputProps={{
+                  style: { color: '#e6edf3' }
+                }}
               />
             </Grid>
             <Grid xs={12} md={6}>
@@ -524,6 +552,12 @@ const AgentManagement = () => {
                 error={!!errors.email}
                 helperText={errors.email}
                 margin="normal"
+                InputLabelProps={{
+                  style: { color: '#8b949e' }
+                }}
+                InputProps={{
+                  style: { color: '#e6edf3' }
+                }}
               />
             </Grid>
             <Grid xs={12} md={6}>
@@ -536,10 +570,28 @@ const AgentManagement = () => {
                 error={!!errors.phone}
                 helperText={errors.phone}
                 margin="normal"
+                InputLabelProps={{
+                  style: { color: '#8b949e' }
+                }}
+                InputProps={{
+                  style: { color: '#e6edf3' }
+                }}
               />
             </Grid>
             <Grid xs={12}>
-              <FormControl fullWidth margin="normal" error={!!errors.level}>
+              <FormControl 
+                fullWidth 
+                margin="normal" 
+                error={!!errors.level}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#8b949e',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    color: '#e6edf3',
+                  }
+                }}
+              >
                 <InputLabel id="agent-level-label">Agent Level</InputLabel>
                 <Select
                   labelId="agent-level-label"
@@ -556,75 +608,154 @@ const AgentManagement = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddDialog}>Cancel</Button>
-          <Button onClick={handleAddAgent} variant="contained" color="primary">
+          <Button 
+            onClick={handleCloseAddDialog}
+            sx={{ color: '#8b949e' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleAddAgent} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#5047e5',
+              '&:hover': {
+                backgroundColor: '#635ae8'
+              }
+            }}
+          >
             Add Agent
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* View Agent Dialog */}
-      <Dialog open={openViewDialog} onClose={handleCloseViewDialog} maxWidth="md" fullWidth>
+      <Dialog 
+        open={openViewDialog} 
+        onClose={handleCloseViewDialog} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: '#1e2130',
+            color: '#e6edf3'
+          }
+        }}
+      >
         {selectedAgent && (
           <>
-            <DialogTitle>Agent Details</DialogTitle>
-            <DialogContent>
-              <Grid container spacing={2}>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">ID</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.id}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Username</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.username}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Name</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.name}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Email</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.email}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Phone</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.phone}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Level</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.level}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Status</Typography>
-                  <Chip
-                    label={selectedAgent.status.charAt(0).toUpperCase() + selectedAgent.status.slice(1)}
-                    color={
-                      selectedAgent.status === 'active'
-                        ? 'success'
-                        : selectedAgent.status === 'pending'
-                        ? 'warning'
-                        : 'error'
-                    }
-                    size="small"
-                  />
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Players</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.players}</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Commission Rate</Typography>
-                  <Typography variant="body1" gutterBottom>{selectedAgent.commission}%</Typography>
-                </Grid>
-                <Grid xs={12} md={6}>
-                  <Typography variant="subtitle2">Total Earnings</Typography>
-                  <Typography variant="body1" gutterBottom>₱{selectedAgent.earnings.toLocaleString()}</Typography>
-                </Grid>
-              </Grid>
+            <DialogTitle>
+              Agent Details
+              <IconButton
+                aria-label="close"
+                onClick={handleCloseViewDialog}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: '#8b949e'
+                }}
+              >
+                &times;
+              </IconButton>
+            </DialogTitle>
+            <DialogContent dividers>
+              <div className="agent-detail-profile">
+                <Avatar sx={{ width: 80, height: 80, bgcolor: '#5047e5' }}>
+                  <PersonIcon sx={{ fontSize: 40 }} />
+                </Avatar>
+                <div className="agent-detail-info">
+                  <Typography variant="h4" sx={{ color: '#e6edf3' }}>{selectedAgent.name}</Typography>
+                  <Typography variant="subtitle1" sx={{ color: '#8b949e' }}>
+                    {selectedAgent.username} - {selectedAgent.level}
+                  </Typography>
+                  <div className={`status-badge ${selectedAgent.status}`}>
+                    {selectedAgent.status.charAt(0).toUpperCase() + selectedAgent.status.slice(1)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="agent-detail-stats">
+                <div className="detail-stat-card">
+                  <div className="detail-stat-icon">
+                    <GroupIcon />
+                  </div>
+                  <div className="detail-stat-content">
+                    <div className="detail-stat-value">{selectedAgent.players}</div>
+                    <div className="detail-stat-label">Players</div>
+                  </div>
+                </div>
+                
+                <div className="detail-stat-card">
+                  <div className="detail-stat-icon">
+                    <AccountBalanceWalletIcon />
+                  </div>
+                  <div className="detail-stat-content">
+                    <div className="detail-stat-value">{selectedAgent.commission}%</div>
+                    <div className="detail-stat-label">Commission Rate</div>
+                  </div>
+                </div>
+                
+                <div className="detail-stat-card">
+                  <div className="detail-stat-icon">
+                    <TrendingUpIcon />
+                  </div>
+                  <div className="detail-stat-content">
+                    <div className="detail-stat-value">₱{selectedAgent.earnings.toLocaleString()}</div>
+                    <div className="detail-stat-label">Total Earnings</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="agent-detail-section">
+                <Typography variant="h6" sx={{ color: '#e6edf3', borderBottom: '1px solid #30363d', paddingBottom: '10px' }}>
+                  Contact Information
+                </Typography>
+                <div className="agent-detail-grid">
+                  <div className="detail-item">
+                    <div className="detail-label">Email</div>
+                    <div className="detail-value">{selectedAgent.email}</div>
+                  </div>
+                  <div className="detail-item">
+                    <div className="detail-label">Phone</div>
+                    <div className="detail-value">{selectedAgent.phone}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="agent-detail-section">
+                <Typography variant="h6" sx={{ color: '#e6edf3', borderBottom: '1px solid #30363d', paddingBottom: '10px' }}>
+                  Agent Details
+                </Typography>
+                <div className="agent-detail-grid">
+                  <div className="detail-item">
+                    <div className="detail-label">ID</div>
+                    <div className="detail-value">{selectedAgent.id}</div>
+                  </div>
+                  <div className="detail-item">
+                    <div className="detail-label">Level</div>
+                    <div className="detail-value">{selectedAgent.level}</div>
+                  </div>
+                </div>
+              </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseViewDialog}>Close</Button>
-              <Button variant="contained" color="primary" startIcon={<EditIcon />}>
+              <Button 
+                onClick={handleCloseViewDialog}
+                sx={{ color: '#8b949e' }}
+              >
+                Close
+              </Button>
+              <Button 
+                variant="contained" 
+                startIcon={<EditIcon />}
+                sx={{ 
+                  backgroundColor: '#5047e5',
+                  '&:hover': {
+                    backgroundColor: '#635ae8'
+                  }
+                }}
+              >
                 Edit Agent
               </Button>
             </DialogActions>

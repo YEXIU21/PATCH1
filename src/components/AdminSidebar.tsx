@@ -18,7 +18,11 @@ import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
-const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  isOpen?: boolean;
+}
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   
@@ -32,10 +36,10 @@ const AdminSidebar: React.FC = () => {
   };
   
   return (
-    <aside className="admin-sidebar">
+    <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <div className="logo-placeholder">
-          MyCasino
+        <div className="logo-container">
+          <img src="/mainicon.png" alt="Casino Admin Logo" className="admin-logo" />
         </div>
         <h2 className="admin-title">Admin Panel</h2>
       </div>

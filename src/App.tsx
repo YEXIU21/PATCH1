@@ -32,6 +32,17 @@ import AffiliateDashboard from './pages/AffiliateDashboard';
 // Admin Pages
 import AdminLayout from './pages/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
+import UserManagement from './pages/UserManagement';
+import GameManagement from './pages/GameManagement';
+import PromotionsManagement from './pages/PromotionsManagement';
+import ReportsAnalytics from './pages/ReportsAnalytics';
+import SystemSettings from './pages/SystemSettings';
+import AppearanceManagement from './pages/AppearanceManagement';
+import ContentManagement from './pages/ContentManagement';
+import CasinoGamesManagement from './pages/CasinoGamesManagement';
+import SlotsManagement from './pages/SlotsManagement';
+import PaymentSettings from './pages/PaymentSettings';
+import TermsConditions from './pages/TermsConditions';
 
 // Components
 import Header from './components/Header';
@@ -133,6 +144,15 @@ const MobileNav = () => {
   );
 };
 
+// Create a wrapper component for AgentManagement to hide its header when used in admin layout
+const AdminAgentManagement = () => {
+  return (
+    <div className="admin-agent-management-wrapper">
+      <AgentManagement />
+    </div>
+  );
+};
+
 // AppContent component to use the consent context
 const AppContent = () => {
   const { showConsentPopup, setShowConsentPopup, setHasConsented } = useConsent();
@@ -170,18 +190,18 @@ const AppContent = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="appearance" element={<div>Appearance Management</div>} />
-          <Route path="content" element={<div>Content Management</div>} />
-          <Route path="users" element={<div>User Management</div>} />
-          <Route path="games" element={<div>Game Management</div>} />
-          <Route path="casino" element={<div>Casino Games Management</div>} />
-          <Route path="slots" element={<div>Slots Management</div>} />
-          <Route path="promotions" element={<div>Promotions Management</div>} />
-          <Route path="payments" element={<div>Payment Settings</div>} />
-          <Route path="reports" element={<div>Reports & Analytics</div>} />
-          <Route path="agents" element={<div>Agent Management</div>} />
-          <Route path="terms" element={<div>Terms & Conditions</div>} />
-          <Route path="settings" element={<div>System Settings</div>} />
+          <Route path="appearance" element={<AppearanceManagement />} />
+          <Route path="content" element={<ContentManagement />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="games" element={<GameManagement />} />
+          <Route path="casino" element={<CasinoGamesManagement />} />
+          <Route path="slots" element={<SlotsManagement />} />
+          <Route path="promotions" element={<PromotionsManagement />} />
+          <Route path="payments" element={<PaymentSettings />} />
+          <Route path="reports" element={<ReportsAnalytics />} />
+          <Route path="agents" element={<AdminAgentManagement />} />
+          <Route path="terms" element={<TermsConditions />} />
+          <Route path="settings" element={<SystemSettings />} />
         </Route>
       </Routes>
     );
