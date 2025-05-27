@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../styles/ConsentPopup.css';
 import { Link } from 'react-router-dom';
 import { ReactComponent as PagcorLogo } from '../assets/pagcor.svg';
+import AppDownloadModal from './AppDownloadModal';
 
 interface ConsentPopupProps {
   onProceed: () => void;
@@ -15,6 +16,8 @@ const ConsentPopup: React.FC<ConsentPopupProps> = ({ onProceed, onExit }) => {
     license: false,
     terms: false
   });
+  const [showAppDownload, setShowAppDownload] = useState(false);
+  const [showConsent, setShowConsent] = useState(true);
 
   const allChecked = Object.values(checkboxes).every(value => value === true);
 
@@ -25,7 +28,24 @@ const ConsentPopup: React.FC<ConsentPopupProps> = ({ onProceed, onExit }) => {
     }));
   };
 
+  const handleProceedClick = () => {
+    if (allChecked) {
+      // Hide the consent modal first
+      setShowConsent(false);
+      
+      // Then show the download modal
+      setShowAppDownload(true);
+    }
+  };
+
+  const handleCloseAppDownload = () => {
+    setShowAppDownload(false);
+    onProceed(); // Continue with the original onProceed functionality after closing the modal
+  };
+
   return (
+    <>
+      {showConsent && (
     <div className="consent-overlay">
       <div className="consent-popup">
         <div className="consent-logo">
@@ -93,7 +113,7 @@ const ConsentPopup: React.FC<ConsentPopupProps> = ({ onProceed, onExit }) => {
         <div className="consent-actions">
           <button 
             className={`consent-proceed ${!allChecked ? 'disabled' : ''}`}
-            onClick={onProceed}
+                onClick={handleProceedClick}
             disabled={!allChecked}
           >
             Proceed
@@ -114,6 +134,14 @@ const ConsentPopup: React.FC<ConsentPopupProps> = ({ onProceed, onExit }) => {
         </div>
       </div>
     </div>
+      )}
+
+      {/* App Download Modal */}
+      <AppDownloadModal 
+        isOpen={showAppDownload} 
+        onClose={handleCloseAppDownload} 
+      />
+    </>
   );
 };
 
