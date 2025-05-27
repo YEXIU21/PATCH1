@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../styles/AdminSidebar.css';
+import mainIcon from '../assets/mainicon.png';
 
 // Import icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -39,7 +40,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen }) => {
     <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <div className="logo-container">
-          <img src="/mainicon.png" alt="Casino Admin Logo" className="admin-logo" />
+          <img src={mainIcon} alt="Casino Admin Logo" className="admin-logo" />
         </div>
         <h2 className="admin-title">Admin Panel</h2>
       </div>
