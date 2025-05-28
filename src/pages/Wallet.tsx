@@ -44,9 +44,10 @@ function TabPanel(props: TabPanelProps) {
       id={`wallet-tabpanel-${index}`}
       aria-labelledby={`wallet-tab-${index}`}
       {...other}
+      style={{ backgroundColor: 'var(--background-dark)' }}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, backgroundColor: 'var(--background-dark)', borderRadius: 'var(--radius-md)', border: '1px solid var(--tertiary)' }}>
           {children}
         </Box>
       )}
@@ -183,8 +184,8 @@ const Wallet = () => {
   ];
 
   return (
-    <div className="wallet-container">
-      <Paper elevation={3} className="wallet-paper">
+    <div className="wallet-container" style={{ backgroundColor: 'var(--background-dark)' }}>
+      <Paper elevation={3} className="wallet-paper" sx={{ backgroundColor: 'var(--background-dark)' }}>
         <Box className="wallet-header">
           <AccountBalanceWalletIcon className="wallet-icon" />
           <Typography variant="h4" component="h1" className="wallet-title">
@@ -192,8 +193,8 @@ const Wallet = () => {
           </Typography>
         </Box>
 
-        <Box className="balance-section">
-          <Typography variant="h5" gutterBottom>
+        <Box className="balance-section" sx={{ backgroundColor: '#111827' }}>
+          <Typography variant="h5" gutterBottom sx={{ color: 'var(--text-secondary)' }}>
             Available Balance
           </Typography>
           <Typography variant="h3" className="balance-amount">
@@ -205,6 +206,7 @@ const Wallet = () => {
               startIcon={<ArrowUpwardIcon />}
               onClick={() => setTabValue(0)}
               className="deposit-button"
+              sx={{ backgroundColor: '#5047e5', '&:hover': { backgroundColor: '#4338ca' } }}
             >
               Deposit
             </Button>
@@ -213,39 +215,75 @@ const Wallet = () => {
               startIcon={<ArrowDownwardIcon />}
               onClick={() => setTabValue(1)}
               className="withdraw-button"
+              sx={{ borderColor: 'var(--tertiary)', color: 'var(--text-primary)' }}
             >
               Withdraw
             </Button>
           </Box>
         </Box>
 
-        <Box className="wallet-tabs-container">
+        <Box className="wallet-tabs-container" sx={{ backgroundColor: 'var(--background-dark)' }}>
           <Tabs 
             value={tabValue} 
             onChange={handleTabChange} 
             aria-label="wallet operations"
             className="wallet-tabs"
             variant="fullWidth"
+            sx={{
+              '& .MuiTabs-indicator': {
+                backgroundColor: 'var(--primary)',
+                height: '3px'
+              },
+              '& .MuiTab-root': {
+                color: 'var(--text-secondary)',
+                fontWeight: 500,
+                fontSize: '14px',
+                textTransform: 'uppercase'
+              },
+              '& .Mui-selected': {
+                color: 'var(--primary)',
+                fontWeight: 600
+              },
+              backgroundColor: 'var(--background-dark)'
+            }}
           >
-            <Tab icon={<ArrowUpwardIcon />} label="Deposit" id="wallet-tab-0" />
-            <Tab icon={<ArrowDownwardIcon />} label="Withdraw" id="wallet-tab-1" />
-            <Tab icon={<HistoryIcon />} label="History" id="wallet-tab-2" />
+            <Tab icon={<ArrowUpwardIcon />} iconPosition="start" label="Deposit" id="wallet-tab-0" />
+            <Tab icon={<ArrowDownwardIcon />} iconPosition="start" label="Withdraw" id="wallet-tab-1" />
+            <Tab icon={<HistoryIcon />} iconPosition="start" label="History" id="wallet-tab-2" />
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
             {showDepositSuccess && (
-              <Alert severity="success" className="success-alert">
+              <Alert 
+                severity="success" 
+                className="success-alert"
+                sx={{
+                  backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                  color: 'var(--success)',
+                  border: '1px solid rgba(63, 185, 80, 0.3)',
+                  borderRadius: 'var(--radius-md)'
+                }}
+              >
                 Your deposit request has been submitted successfully!
               </Alert>
             )}
             
-            <FormControl fullWidth error={!!errors.depositMethod} margin="normal">
+            <FormControl fullWidth error={!!errors.depositMethod} margin="normal" sx={{ 
+              '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+              '& .MuiOutlinedInput-root': { 
+                color: 'var(--text-primary)',
+                '& fieldset': { borderColor: 'var(--tertiary)' },
+                '&:hover fieldset': { borderColor: 'var(--primary)' },
+                '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+              }
+            }}>
               <InputLabel id="deposit-method-label">Deposit Method</InputLabel>
               <Select
                 labelId="deposit-method-label"
                 value={depositMethod}
                 label="Deposit Method"
                 onChange={handleDepositMethodChange}
+                sx={{ backgroundColor: '#111827' }}
               >
                 <MenuItem value="bitcoin">Bitcoin</MenuItem>
                 <MenuItem value="ethereum">Ethereum</MenuItem>
@@ -269,12 +307,25 @@ const Wallet = () => {
                 startAdornment: depositMethod === 'bitcoin' || depositMethod === 'ethereum' ? 
                   null : <Typography className="currency-symbol">₱</Typography>
               }}
+              sx={{ 
+                '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                '& .MuiOutlinedInput-root': { 
+                  color: 'var(--text-primary)',
+                  backgroundColor: '#111827',
+                  '& fieldset': { borderColor: 'var(--tertiary)' },
+                  '&:hover fieldset': { borderColor: 'var(--primary)' },
+                  '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                },
+                '& .MuiFormHelperText-root': {
+                  color: errors.depositAmount ? 'var(--error)' : 'var(--text-muted)'
+                }
+              }}
             />
             
             {depositMethod === 'bitcoin' && (
-              <Card className="crypto-address-card">
+              <Card className="crypto-address-card" sx={{ backgroundColor: 'var(--background-dark)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--text-primary)' }}>
                     Bitcoin Deposit Address
                   </Typography>
                   <Box className="address-container">
@@ -290,7 +341,7 @@ const Wallet = () => {
                       {copied ? <CheckCircleIcon /> : <ContentCopyIcon />}
                     </IconButton>
                   </Box>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                     Please send only Bitcoin (BTC) to this address. Sending any other cryptocurrency may result in permanent loss.
                   </Typography>
                 </CardContent>
@@ -298,9 +349,9 @@ const Wallet = () => {
             )}
             
             {depositMethod === 'ethereum' && (
-              <Card className="crypto-address-card">
+              <Card className="crypto-address-card" sx={{ backgroundColor: 'var(--background-dark)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--text-primary)' }}>
                     Ethereum Deposit Address
                   </Typography>
                   <Box className="address-container">
@@ -316,7 +367,7 @@ const Wallet = () => {
                       {copied ? <CheckCircleIcon /> : <ContentCopyIcon />}
                     </IconButton>
                   </Box>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                     Please send only Ethereum (ETH) to this address. Sending any other cryptocurrency may result in permanent loss.
                   </Typography>
                 </CardContent>
@@ -324,18 +375,18 @@ const Wallet = () => {
             )}
             
             {depositMethod === 'gcash' && (
-              <Card className="payment-info-card">
+              <Card className="payment-info-card" sx={{ backgroundColor: 'var(--background-dark)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--text-primary)' }}>
                     GCash Payment Details
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Account Name:</strong> Your Company
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Mobile Number:</strong> 09123456789
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                     Please include your username in the reference/message field when making the payment.
                   </Typography>
                 </CardContent>
@@ -343,18 +394,18 @@ const Wallet = () => {
             )}
             
             {depositMethod === 'paymaya' && (
-              <Card className="payment-info-card">
+              <Card className="payment-info-card" sx={{ backgroundColor: 'var(--background-dark)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--text-primary)' }}>
                     PayMaya Payment Details
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Account Name:</strong> Your Company
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Mobile Number:</strong> 09123456789
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                     Please include your username in the reference/message field when making the payment.
                   </Typography>
                 </CardContent>
@@ -362,21 +413,21 @@ const Wallet = () => {
             )}
             
             {depositMethod === 'bank' && (
-              <Card className="payment-info-card">
+              <Card className="payment-info-card" sx={{ backgroundColor: 'var(--background-dark)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--text-primary)' }}>
                     Bank Transfer Details
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Bank Name:</strong> BDO
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Account Name:</strong> Your Company
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
                     <strong>Account Number:</strong> 1234 5678 9012
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                     Please include your username in the reference/message field when making the transfer.
                   </Typography>
                 </CardContent>
@@ -385,30 +436,57 @@ const Wallet = () => {
             
             <Button 
               variant="contained" 
-              color="primary" 
               fullWidth 
               className="action-button"
               onClick={handleDeposit}
               disabled={!depositMethod || !depositAmount}
+              sx={{
+                backgroundColor: '#5047e5',
+                '&:hover': {
+                  backgroundColor: '#4338ca'
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: 'var(--tertiary)',
+                  color: 'var(--text-muted)'
+                }
+              }}
             >
-              Confirm Deposit
+              CONFIRM DEPOSIT
             </Button>
           </TabPanel>
 
           <TabPanel value={tabValue} index={1}>
             {showWithdrawSuccess && (
-              <Alert severity="success" className="success-alert">
+              <Alert 
+                severity="success" 
+                className="success-alert"
+                sx={{
+                  backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                  color: 'var(--success)',
+                  border: '1px solid rgba(63, 185, 80, 0.3)',
+                  borderRadius: 'var(--radius-md)'
+                }}
+              >
                 Your withdrawal request has been submitted successfully!
               </Alert>
             )}
             
-            <FormControl fullWidth error={!!errors.withdrawMethod} margin="normal">
+            <FormControl fullWidth error={!!errors.withdrawMethod} margin="normal" sx={{ 
+              '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+              '& .MuiOutlinedInput-root': { 
+                color: 'var(--text-primary)',
+                '& fieldset': { borderColor: 'var(--tertiary)' },
+                '&:hover fieldset': { borderColor: 'var(--primary)' },
+                '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+              }
+            }}>
               <InputLabel id="withdraw-method-label">Withdrawal Method</InputLabel>
               <Select
                 labelId="withdraw-method-label"
                 value={withdrawMethod}
                 label="Withdrawal Method"
                 onChange={handleWithdrawMethodChange}
+                sx={{ backgroundColor: '#111827' }}
               >
                 <MenuItem value="bitcoin">Bitcoin</MenuItem>
                 <MenuItem value="ethereum">Ethereum</MenuItem>
@@ -432,6 +510,16 @@ const Wallet = () => {
                 startAdornment: withdrawMethod === 'bitcoin' || withdrawMethod === 'ethereum' ? 
                   null : <Typography className="currency-symbol">₱</Typography>
               }}
+              sx={{ 
+                '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                '& .MuiOutlinedInput-root': { 
+                  color: 'var(--text-primary)',
+                  backgroundColor: '#111827',
+                  '& fieldset': { borderColor: 'var(--tertiary)' },
+                  '&:hover fieldset': { borderColor: 'var(--primary)' },
+                  '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                }
+              }}
             />
             
             {withdrawMethod === 'bitcoin' && (
@@ -440,6 +528,19 @@ const Wallet = () => {
                 label="Bitcoin Address"
                 margin="normal"
                 placeholder="Enter your Bitcoin wallet address"
+                sx={{ 
+                  '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                  '& .MuiOutlinedInput-root': { 
+                    color: 'var(--text-primary)',
+                    backgroundColor: '#111827',
+                    '& fieldset': { borderColor: 'var(--tertiary)' },
+                    '&:hover fieldset': { borderColor: 'var(--primary)' },
+                    '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                  },
+                  '& .MuiInputBase-input::placeholder': {
+                    color: 'var(--text-muted)'
+                  }
+                }}
               />
             )}
             
@@ -449,6 +550,19 @@ const Wallet = () => {
                 label="Ethereum Address"
                 margin="normal"
                 placeholder="Enter your Ethereum wallet address"
+                sx={{ 
+                  '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                  '& .MuiOutlinedInput-root': { 
+                    color: 'var(--text-primary)',
+                    backgroundColor: '#111827',
+                    '& fieldset': { borderColor: 'var(--tertiary)' },
+                    '&:hover fieldset': { borderColor: 'var(--primary)' },
+                    '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                  },
+                  '& .MuiInputBase-input::placeholder': {
+                    color: 'var(--text-muted)'
+                  }
+                }}
               />
             )}
             
@@ -458,6 +572,19 @@ const Wallet = () => {
                 label="GCash Number"
                 margin="normal"
                 placeholder="Enter your GCash mobile number"
+                sx={{ 
+                  '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                  '& .MuiOutlinedInput-root': { 
+                    color: 'var(--text-primary)',
+                    backgroundColor: '#111827',
+                    '& fieldset': { borderColor: 'var(--tertiary)' },
+                    '&:hover fieldset': { borderColor: 'var(--primary)' },
+                    '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                  },
+                  '& .MuiInputBase-input::placeholder': {
+                    color: 'var(--text-muted)'
+                  }
+                }}
               />
             )}
             
@@ -467,6 +594,19 @@ const Wallet = () => {
                 label="PayMaya Number"
                 margin="normal"
                 placeholder="Enter your PayMaya mobile number"
+                sx={{ 
+                  '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                  '& .MuiOutlinedInput-root': { 
+                    color: 'var(--text-primary)',
+                    backgroundColor: '#111827',
+                    '& fieldset': { borderColor: 'var(--tertiary)' },
+                    '&:hover fieldset': { borderColor: 'var(--primary)' },
+                    '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                  },
+                  '& .MuiInputBase-input::placeholder': {
+                    color: 'var(--text-muted)'
+                  }
+                }}
               />
             )}
             
@@ -477,36 +617,84 @@ const Wallet = () => {
                   label="Bank Name"
                   margin="normal"
                   placeholder="Enter your bank name"
+                  sx={{ 
+                    '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                    '& .MuiOutlinedInput-root': { 
+                      color: 'var(--text-primary)',
+                      backgroundColor: '#111827',
+                      '& fieldset': { borderColor: 'var(--tertiary)' },
+                      '&:hover fieldset': { borderColor: 'var(--primary)' },
+                      '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      color: 'var(--text-muted)'
+                    }
+                  }}
                 />
                 <TextField
                   fullWidth
                   label="Account Name"
                   margin="normal"
                   placeholder="Enter account holder name"
+                  sx={{ 
+                    '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                    '& .MuiOutlinedInput-root': { 
+                      color: 'var(--text-primary)',
+                      backgroundColor: '#111827',
+                      '& fieldset': { borderColor: 'var(--tertiary)' },
+                      '&:hover fieldset': { borderColor: 'var(--primary)' },
+                      '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      color: 'var(--text-muted)'
+                    }
+                  }}
                 />
                 <TextField
                   fullWidth
                   label="Account Number"
                   margin="normal"
                   placeholder="Enter your account number"
+                  sx={{ 
+                    '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+                    '& .MuiOutlinedInput-root': { 
+                      color: 'var(--text-primary)',
+                      backgroundColor: '#111827',
+                      '& fieldset': { borderColor: 'var(--tertiary)' },
+                      '&:hover fieldset': { borderColor: 'var(--primary)' },
+                      '&.Mui-focused fieldset': { borderColor: 'var(--primary)' }
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      color: 'var(--text-muted)'
+                    }
+                  }}
                 />
               </>
             )}
             
             <Button 
               variant="contained" 
-              color="primary" 
               fullWidth 
               className="action-button"
               onClick={handleWithdraw}
               disabled={!withdrawMethod || !withdrawAmount}
+              sx={{
+                backgroundColor: '#5047e5',
+                '&:hover': {
+                  backgroundColor: '#4338ca'
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: 'var(--tertiary)',
+                  color: 'var(--text-muted)'
+                }
+              }}
             >
               Request Withdrawal
             </Button>
           </TabPanel>
 
           <TabPanel value={tabValue} index={2}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ color: 'var(--text-primary)' }}>
               Recent Transactions
             </Typography>
             
@@ -515,36 +703,48 @@ const Wallet = () => {
                 {recentTransactions.map((transaction, index) => (
                   <React.Fragment key={transaction.id}>
                     <Box className="transaction-item">
-                      <Box className="transaction-icon-container">
+                      <Box className="transaction-icon-container" sx={{ backgroundColor: 'var(--secondary)' }}>
                         {transaction.type === 'deposit' ? (
-                          <ArrowUpwardIcon className="deposit-icon" />
+                          <ArrowUpwardIcon className="deposit-icon" sx={{ color: 'var(--success)' }} />
                         ) : (
-                          <ArrowDownwardIcon className="withdraw-icon" />
+                          <ArrowDownwardIcon className="withdraw-icon" sx={{ color: 'var(--warning)' }} />
                         )}
                       </Box>
                       <Box className="transaction-details">
-                        <Typography variant="subtitle2">
+                        <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)' }}>
                           {transaction.type === 'deposit' ? 'Deposit' : 'Withdrawal'} via {transaction.method}
                         </Typography>
-                        <Typography variant="caption" color="textSecondary">
+                        <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
                           {transaction.date} • {transaction.id}
                         </Typography>
                       </Box>
                       <Box className="transaction-amount">
-                        <Typography variant="subtitle2" className={transaction.type === 'deposit' ? 'amount-positive' : 'amount-negative'}>
+                        <Typography 
+                          variant="subtitle2" 
+                          sx={{ 
+                            color: transaction.type === 'deposit' ? 'var(--success)' : 'var(--warning)' 
+                          }}
+                        >
                           {transaction.type === 'deposit' ? '+' : '-'}{transaction.amount}
                         </Typography>
-                        <Typography variant="caption" className={`status-${transaction.status}`}>
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            color: transaction.status === 'completed' ? 'var(--success)' : 'var(--warning)' 
+                          }}
+                        >
                           {transaction.status}
                         </Typography>
                       </Box>
                     </Box>
-                    {index < recentTransactions.length - 1 && <Divider />}
+                    {index < recentTransactions.length - 1 && (
+                      <Divider sx={{ backgroundColor: 'var(--tertiary)' }} />
+                    )}
                   </React.Fragment>
                 ))}
               </div>
             ) : (
-              <Typography variant="body1" className="no-transactions">
+              <Typography variant="body1" className="no-transactions" sx={{ color: 'var(--text-muted)' }}>
                 No transactions yet
               </Typography>
             )}
@@ -554,6 +754,14 @@ const Wallet = () => {
               fullWidth 
               className="view-all-button"
               startIcon={<HistoryIcon />}
+              sx={{
+                color: 'var(--primary)',
+                borderColor: 'var(--primary)',
+                '&:hover': {
+                  backgroundColor: 'var(--primary-light)',
+                  borderColor: 'var(--primary)'
+                }
+              }}
             >
               View All Transactions
             </Button>

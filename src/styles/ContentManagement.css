@@ -47,6 +47,17 @@
   border-color: var(--primary);
 }
 
+/* Make the banner tab more visible when selected */
+.content-tab[class*="active"] {
+  color: #ffffff;
+  background-color: rgba(80, 71, 229, 0.4);
+}
+
+/* Ensure the Banners tab is properly visible */
+.content-tab:nth-child(3) {
+  color: var(--text-primary);
+}
+
 .content-tab svg {
   font-size: 18px;
 }
@@ -208,85 +219,119 @@
 
 .content-table-container {
   overflow-x: auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .content-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
 }
 
 .content-table th,
 .content-table td {
   padding: 12px 16px;
-  text-align: left;
   border-bottom: 1px solid var(--tertiary);
+  vertical-align: middle;
 }
 
-.content-table th {
-  color: var(--text-primary);
-  font-weight: 600;
-  background-color: var(--secondary);
-}
+/* Column widths and alignment */
+.content-table th:nth-child(1) { width: 30%; text-align: left; } /* Title */
+.content-table th:nth-child(2) { width: 12%; text-align: center; } /* Type */
+.content-table th:nth-child(3) { width: 12%; text-align: center; } /* Status */
+.content-table th:nth-child(4) { width: 15%; text-align: left; } /* Language */
+.content-table th:nth-child(5) { width: 15%; text-align: left; } /* Last Updated */
+.content-table th:nth-child(6) { width: 16%; text-align: center; } /* Actions */
 
-.content-table tr:hover {
-  background-color: var(--secondary);
-}
+.content-table td:nth-child(1) { text-align: left; } /* Title cell */
+.content-table td:nth-child(2) { text-align: center; } /* Type cell */
+.content-table td:nth-child(3) { text-align: center; } /* Status cell */
+.content-table td:nth-child(4) { text-align: left; } /* Language cell */
+.content-table td:nth-child(5) { text-align: left; } /* Last Updated cell */
+.content-table td:nth-child(6) { text-align: center; } /* Actions cell */
 
-.content-table tr.editing {
-  background-color: var(--primary-light);
-}
-
-.content-type,
-.content-status {
+/* Make badges consistent width */
+.content-type, .content-status {
   display: inline-block;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 500;
+  min-width: 80px;
+  text-align: center;
+  margin: 0 auto;
+  user-select: text;
+  cursor: text;
+  color: #ffffff;
 }
+
+/* Type badges */
+/* Removing all previous Banner type styles */
 
 .content-type.page {
-  background-color: rgba(80, 71, 229, 0.1);
-  color: var(--primary);
-}
-
-.content-type.banner {
-  background-color: rgba(63, 185, 80, 0.1);
-  color: var(--success);
+  background-color: rgba(80, 71, 229, 0.6);
+  color: #ffffff;
 }
 
 .content-type.carousel {
-  background-color: rgba(247, 185, 85, 0.1);
-  color: var(--warning);
+  background-color: rgba(247, 185, 85, 0.6);
+  color: #ffffff;
 }
 
 .content-type.promotion {
-  background-color: rgba(255, 71, 87, 0.1);
-  color: var(--error);
+  background-color: rgba(255, 71, 87, 0.6);
+  color: #ffffff;
 }
 
+/* Completely new banner style with no inheritance */
+.type-banner-label {
+  display: inline-block !important;
+  width: 80px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  background-color: #33ab5c !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* Status badges */
 .content-status.published {
-  background-color: rgba(63, 185, 80, 0.1);
-  color: var(--success);
+  background-color: rgba(63, 185, 80, 0.6);
+  color: #ffffff;
 }
 
 .content-status.draft {
-  background-color: rgba(139, 148, 158, 0.1);
-  color: var(--text-muted);
+  background-color: rgba(139, 148, 158, 0.6);
+  color: #ffffff;
 }
 
 .content-status.scheduled {
-  background-color: rgba(247, 185, 85, 0.1);
-  color: var(--warning);
+  background-color: rgba(247, 185, 85, 0.6);
+  color: #ffffff;
 }
 
+/* Action buttons container */
 .content-actions-cell {
-  display: flex;
-  gap: 10px;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5px 0;
+  width: auto;
 }
 
 .action-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
@@ -296,6 +341,7 @@
   background: none;
   cursor: pointer;
   transition: var(--transition);
+  margin: 0 2px;
 }
 
 .action-button svg {
@@ -332,7 +378,7 @@
   padding: 30px !important;
 }
 
-/* Responsive styles */
+/* Media queries for responsive design */
 @media (max-width: 1024px) {
   .content-header {
     flex-direction: column;
@@ -350,6 +396,10 @@
   
   .content-search input {
     width: 200px;
+  }
+  
+  .content-table {
+    min-width: 800px; /* Ensure table doesn't collapse too much on small screens */
   }
 }
 
@@ -377,4 +427,58 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+.content-table th {
+  color: #ffffff;
+  font-weight: 600;
+  background-color: var(--secondary);
+  padding: 15px 16px;
+  text-transform: uppercase;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.content-table th:nth-child(2), 
+.content-table th:nth-child(3), 
+.content-table th:nth-child(6) {
+  text-align: center !important;
+}
+
+.content-table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  user-select: text !important;
+  cursor: text;
+}
+
+.content-type.carousel,
+.content-type.page,
+.content-type.promotion {
+  display: inline-block;
+  width: 80px;
+  margin: 0 auto;
+  text-align: center;
+  user-select: text;
+  cursor: text;
+  color: #ffffff;
+}
+
+/* Removing all banner type styles since we're using a new class name */
+
+.content-status.published,
+.content-status.draft,
+.content-status.scheduled {
+  display: inline-block;
+  width: 80px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.content-table tr:hover {
+  background-color: var(--secondary);
+}
+
+.content-table tr.editing {
+  background-color: var(--primary-light);
 } 

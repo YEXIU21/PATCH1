@@ -288,19 +288,26 @@ const ContentManagement: React.FC = () => {
                 filteredContent.map(item => (
                   <tr key={item.id} className={editingItem === item.id ? 'editing' : ''}>
                     <td>{item.title}</td>
-                    <td>
+                    <td style={{ textAlign: 'center' }}>
+                      {item.type === 'banner' ? (
+                        <span className="type-banner-label">
+                          Banner
+                        </span>
+                      ) : (
                       <span className={`content-type ${item.type}`}>
                         {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                       </span>
+                      )}
                     </td>
-                    <td>
+                    <td style={{ textAlign: 'center' }}>
                       <span className={`content-status ${item.status}`}>
                         {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                       </span>
                     </td>
                     <td>{item.language}</td>
                     <td>{item.lastUpdated}</td>
-                    <td className="content-actions-cell">
+                    <td style={{ textAlign: 'center' }}>
+                      <div className="content-actions-cell">
                       {editingItem === item.id ? (
                         <button className="action-button save" onClick={handleSaveItem}>
                           <SaveIcon />
@@ -313,6 +320,7 @@ const ContentManagement: React.FC = () => {
                       <button className="action-button delete" onClick={() => handleDeleteItem(item.id)}>
                         <DeleteIcon />
                       </button>
+                      </div>
                     </td>
                   </tr>
                 ))

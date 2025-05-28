@@ -50,6 +50,7 @@ import Footer from './components/Footer';
 import Sidebar from './components/Sidebar';
 import ConsentPopup from './components/ConsentPopup';
 import SplashScreen from './components/SplashScreen';
+import CardBackground from './components/CardBackground';
 
 // Context
 import { ConsentProvider, useConsent } from './contexts/ConsentContext';
@@ -256,11 +257,15 @@ const AppContent = () => {
             <Route path="/affiliate/dashboard" element={<AffiliateDashboard />} />
             <Route path="/affiliate/forgot-password" element={<ForgotPassword />} />
             
+            {/* Terms and Conditions Route */}
+            <Route path="/terms" element={<TermsConditions />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </div>
-      {!isAuthPage && !isAffiliatePage && (isMobile ? <MobileNav /> : <Footer />)}
+      {!isAuthPage && !isAffiliatePage && <Footer />}
+      {!isAuthPage && !isAffiliatePage && isMobile && <MobileNav />}
       
       {/* Consent Popup */}
       {showConsentPopup && (
@@ -272,11 +277,12 @@ const AppContent = () => {
 
 function App() {
   return (
-    <Router>
-      <ConsentProvider>
+    <ConsentProvider>
+      <Router>
+        <CardBackground />
         <AppContent />
-      </ConsentProvider>
-    </Router>
+      </Router>
+    </ConsentProvider>
   );
 }
 

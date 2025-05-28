@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 import LiveBets from '../components/LiveBets';
+import SlidingBanner from '../components/SlidingBanner';
 
 // Import images
 import banner1 from '../assets/banner1.png';
@@ -72,16 +73,6 @@ const Home: React.FC = () => {
     { id: 'jackpot', name: 'Jackpots', icon: <EmojiEventsIcon /> },
   ];
   
-  // Banners for the carousel
-  const banners = [
-    { id: 1, image: banner1, title: 'ELEVATE YOUR GAMEPLAY', text: 'Experience the thrill of our premium casino games.', buttonText: 'Explore Games', link: '/casino' },
-    { id: 2, image: banner2, title: 'WEEKLY TOURNAMENTS', text: 'Compete for the top prizes in our exclusive weekly tournaments.', buttonText: 'Join Now', link: '/tournaments' },
-    { id: 3, image: banner3, title: 'VIP REWARDS', text: 'Join our VIP program for exclusive bonuses and personalized offers.', buttonText: 'Learn More', link: '/promotions' },
-  ];
-  
-  // Current banner (in a real app this would rotate with a carousel)
-  const currentBanner = banners[0];
-  
   // Function to handle playing a game
   const handlePlayGame = (gameId: number, gameTitle: string) => {
     console.log(`Playing game: ${gameTitle} (ID: ${gameId})`);
@@ -98,14 +89,7 @@ const Home: React.FC = () => {
   
   return (
     <div className="home-page">
-      <section className="banner">
-        <img src={currentBanner.image} alt="Casino Banner" />
-        <div className="banner-content">
-          <h1 className="banner-title">{currentBanner.title}</h1>
-          <p className="banner-text">{currentBanner.text}</p>
-          <Link to={currentBanner.link} className="btn btn-primary">{currentBanner.buttonText}</Link>
-        </div>
-      </section>
+      <SlidingBanner />
       
       <section className="section">
         <div className="section-header">
@@ -339,6 +323,18 @@ const Home: React.FC = () => {
           </div>
           <div className="app-image">
             <img src={banner3} alt="Casino App" />
+          </div>
+        </div>
+      </section>
+      
+      {/* Responsible Gaming Message */}
+      <section className="responsible-gaming-section">
+        <div className="responsible-gaming-container">
+          <div className="responsible-gaming-icon">18+</div>
+          <div className="responsible-gaming-text">
+            <h3>Play Responsibly</h3>
+            <p>Gambling should be entertaining. Remember to set limits and never gamble more than you can afford to lose.</p>
+            <Link to="/responsible-gaming" className="responsible-gaming-link">Learn More</Link>
           </div>
         </div>
       </section>

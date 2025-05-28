@@ -3,11 +3,16 @@
   max-width: 900px;
   margin: 20px auto;
   padding: 0 20px;
+  background-color: var(--background-dark);
+  color: var(--text-primary);
 }
 
 .wallet-paper {
   padding: 30px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
+  background-color: var(--background-dark) !important;
+  border: 1px solid var(--tertiary);
+  box-shadow: var(--shadow-md);
 }
 
 .wallet-header {
@@ -19,12 +24,12 @@
 
 .wallet-icon {
   font-size: 2.5rem;
-  color: var(--primary, #5047e5);
+  color: var(--primary);
   margin-right: 15px;
 }
 
 .wallet-title {
-  color: var(--primary, #5047e5);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -32,12 +37,13 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background-color: var(--background-light, #21262d);
-  border-radius: 12px;
+  background-color: #111827 !important;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--tertiary);
 }
 
 .balance-amount {
-  color: var(--text-primary, #e6edf3);
+  color: var(--text-primary);
   margin: 10px 0 20px;
   font-weight: 700;
 }
@@ -49,65 +55,104 @@
 }
 
 .deposit-button {
-  background-color: var(--success, #2ea043);
+  background-color: #5047e5 !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: var(--radius-md) !important;
 }
 
 .deposit-button:hover {
-  background-color: var(--success-dark, #238636);
+  background-color: #4338ca !important;
+  opacity: 0.9;
 }
 
 .withdraw-button {
-  border-color: var(--warning, #f85149);
-  color: var(--warning, #f85149);
+  border-color: var(--tertiary) !important;
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+  padding: 10px 20px !important;
+  border-radius: var(--radius-md) !important;
 }
 
 .withdraw-button:hover {
-  background-color: rgba(248, 81, 73, 0.1);
+  background-color: var(--secondary) !important;
 }
 
 .wallet-tabs-container {
   margin-top: 20px;
+  background-color: var(--background-dark);
 }
 
 .wallet-tabs {
   margin-bottom: 20px;
+  color: var(--primary);
+  border-bottom: 1px solid var(--tertiary);
+  background-color: var(--background-dark);
+}
+
+.tab-indicator {
+  background-color: var(--primary) !important;
 }
 
 .success-alert {
   margin-bottom: 20px;
+  background-color: rgba(63, 185, 80, 0.1) !important;
+  color: var(--success) !important;
+  border: 1px solid rgba(63, 185, 80, 0.3) !important;
 }
 
 .crypto-address-card, 
 .payment-info-card {
   margin: 20px 0;
+  background-color: #111827 !important;
+  border: 1px solid var(--tertiary);
+  border-radius: var(--radius-md);
 }
 
 .address-container {
   display: flex;
   align-items: center;
-  background-color: var(--background-dark, #0d1117);
+  background-color: var(--background-dark) !important;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin: 10px 0;
+  border: 1px solid var(--tertiary);
 }
 
 .crypto-address {
   flex: 1;
   word-break: break-all;
   font-family: monospace;
+  color: var(--text-secondary);
 }
 
 .copy-button {
   margin-left: 10px;
+  color: var(--text-muted);
+}
+
+.copy-button:hover {
+  color: var(--primary);
 }
 
 .currency-symbol {
   margin-right: 5px;
   font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .action-button {
   margin-top: 20px;
+  background-color: #5047e5 !important;
+  color: white !important;
+  padding: 12px !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+}
+
+.action-button:hover {
+  background-color: #4338ca !important;
 }
 
 .transactions-list {
@@ -129,14 +174,15 @@
   justify-content: center;
   margin-right: 15px;
   flex-shrink: 0;
+  background-color: var(--secondary);
 }
 
 .deposit-icon {
-  color: var(--success, #2ea043);
+  color: var(--success);
 }
 
 .withdraw-icon {
-  color: var(--warning, #f85149);
+  color: var(--warning);
 }
 
 .transaction-details {
@@ -148,29 +194,63 @@
 }
 
 .amount-positive {
-  color: var(--success, #2ea043);
+  color: var(--success);
 }
 
 .amount-negative {
-  color: var(--warning, #f85149);
+  color: var(--warning);
 }
 
 .status-completed {
-  color: var(--success, #2ea043);
+  color: var(--success);
 }
 
 .status-pending {
-  color: var(--warning, #f85149);
+  color: var(--warning);
 }
 
 .view-all-button {
   margin-top: 20px;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background-color: transparent !important;
+}
+
+.view-all-button:hover {
+  background-color: var(--primary-light) !important;
 }
 
 .no-transactions {
   text-align: center;
   padding: 30px;
-  color: var(--text-muted, #8b949e);
+  color: var(--text-muted);
+}
+
+/* Fix for MUI Tabs and TabPanel background */
+.MuiTabs-root {
+  background-color: var(--background-dark) !important;
+}
+
+.MuiTabPanel-root {
+  background-color: var(--background-dark) !important;
+}
+
+/* Fix for MUI form fields */
+.MuiInputBase-root {
+  background-color: #111827 !important;
+}
+
+.MuiMenuItem-root {
+  background-color: #111827 !important;
+  color: var(--text-primary) !important;
+}
+
+.MuiMenuItem-root:hover {
+  background-color: var(--secondary) !important;
+}
+
+.MuiPaper-root {
+  background-color: var(--background-dark) !important;
 }
 
 @media (max-width: 768px) {

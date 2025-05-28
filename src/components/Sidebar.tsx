@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Sidebar.css';
 
@@ -28,6 +28,8 @@ import GroupIcon from '@mui/icons-material/Group';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 // Import profile image
 import ProfilePicture from '../assets/ProfilePicture.jpg';
@@ -40,11 +42,12 @@ const Sidebar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({
     games: false,
-    player: false,
     support: false
   });
   const [showAuth, setShowAuth] = useState(false);
   const [initialModal, setInitialModal] = useState<'login' | 'signup' | 'forgotPassword' | null>(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,12 +70,22 @@ const Sidebar: React.FC = () => {
       setIsMobile(window.innerWidth <= 768);
     };
     
+    // Add click outside listener to close profile dropdown
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setShowProfileDropdown(false);
+      }
+    };
+    
     window.addEventListener('resize', handleResize);
+    document.addEventListener('mousedown', handleClickOutside);
+    
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('appinstalled', () => {
         setIsPWAInstalled(true);
       });
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -81,6 +94,11 @@ const Sidebar: React.FC = () => {
     if (sidebar && isMobile) {
       sidebar.classList.remove('active');
     }
+  };
+
+  // Toggle profile dropdown
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown(!showProfileDropdown);
   };
 
   // Handle login button click
@@ -180,12 +198,6 @@ const Sidebar: React.FC = () => {
     { name: 'Specialty Game', link: '/specialty-game', icon: <SpecialtyGameIcon /> },
   ];
 
-  const playerAreaLinks = [
-    { name: 'My Account', link: '/account', icon: <AccountCircleIcon /> },
-    { name: 'My Wallet', link: '/wallet', icon: <WalletIcon /> },
-    { name: 'My Rewards', link: '/rewards', icon: <TrophyIcon /> },
-  ];
-
   const supportLinks = [
     { name: 'Support & FAQ', link: '/support', icon: <HelpOutlineIcon /> },
     { name: 'Chat Support', link: '#', icon: <ChatIcon />, onClick: () => window.open('https://m.me/yourcasinopagename', '_blank') },
@@ -218,7 +230,7 @@ const Sidebar: React.FC = () => {
         )}
 
         {/* User Status */}
-        <div className="user-status">
+        <div className="user-status" onClick={toggleProfileDropdown} ref={profileDropdownRef}>
           <div className="user-avatar">
             <img src={ProfilePicture} alt="User" />
             <span className="status-indicator online"></span>
@@ -227,6 +239,69 @@ const Sidebar: React.FC = () => {
             <div className="user-name">Player VIP</div>
             <div className="user-balance">₱1,250.00</div>
           </div>
+          <div className="profile-dropdown-icon">
+            {showProfileDropdown ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+          </div>
+          
+          {/* Profile Dropdown */}
+          {showProfileDropdown && (
+            <div className="profile-dropdown">
+              <div className="mobile-dropdown-header">
+                <button className="close-dropdown-btn" onClick={() => setShowProfileDropdown(false)}>
+                  <CloseIcon />
+                </button>
+              </div>
+            
+              <div className="profile-header">
+                <div className="profile-avatar">
+                  <div className="profile-initial">U</div>
+                </div>
+                <div className="profile-details">
+                  <div className="profile-name">User</div>
+                  <div className="profile-level">Player VIP</div>
+                </div>
+              </div>
+              
+              <div className="profile-balance-section">
+                <div className="balance-label">Balance</div>
+                <div className="balance-amount">₱1,250.00</div>
+                <Link to="/wallet" className="quick-deposit-btn" onClick={() => setShowProfileDropdown(false)}>
+                  Deposit
+                </Link>
+              </div>
+              
+              <div className="profile-menu">
+                <Link to="/account" className="profile-menu-item" onClick={() => setShowProfileDropdown(false)}>
+                  <AccountCircleIcon />
+                  <span>My Account</span>
+                </Link>
+                <Link to="/wallet" className="profile-menu-item" onClick={() => setShowProfileDropdown(false)}>
+                  <WalletIcon />
+                  <span>My Wallet</span>
+                </Link>
+                <Link to="/rewards" className="profile-menu-item" onClick={() => setShowProfileDropdown(false)}>
+                  <TrophyIcon />
+                  <span>My Rewards</span>
+                </Link>
+                <Link to="/settings" className="profile-menu-item" onClick={() => setShowProfileDropdown(false)}>
+                  <SettingsIcon />
+                  <span>Settings</span>
+                </Link>
+              </div>
+              
+              <div className="profile-footer">
+                <button className="logout-button">
+                  <LogoutIcon />
+                  <span>Logout</span>
+                </button>
+              </div>
+              
+              <Link to="/poker" className="profile-menu-item poker-link" onClick={() => setShowProfileDropdown(false)}>
+                <PokerIcon />
+                <span>Poker</span>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Main Navigation */}
@@ -274,34 +349,6 @@ const Sidebar: React.FC = () => {
                   >
                     <span className="category-icon">{category.icon}</span>
                     {category.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="sidebar-section">
-          <h3 
-            className="sidebar-title"
-            onClick={() => toggleSection('player')}
-          >
-            Player Area
-            <span className="toggle-icon">
-              {collapsedSections.player ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-            </span>
-          </h3>
-          {!collapsedSections.player && (
-            <ul className="quick-links">
-              {playerAreaLinks.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    to={link.link} 
-                    className={`quick-link ${isActive(link.link) ? 'active' : ''}`}
-                    onClick={isMobile ? closeMobileMenu : undefined}
-                  >
-                    <span className="quick-link-icon">{link.icon}</span>
-                    {link.name}
                   </Link>
                 </li>
               ))}
