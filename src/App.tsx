@@ -278,11 +278,11 @@ const AppContent = () => {
 function App() {
   return (
     <ConsentProvider>
-      <Router>
+    <Router>
         <CardBackground />
         <AppContent />
       </Router>
-    </ConsentProvider>
+      </ConsentProvider>
   );
 }
 

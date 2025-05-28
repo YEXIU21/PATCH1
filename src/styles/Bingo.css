@@ -78,11 +78,25 @@
 
 @media (max-width: 480px) {
   .game-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   
   .game-image {
-    height: 120px;
+    height: 100px;
+  }
+  
+  .game-title {
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+  }
+  
+  .game-category {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+  }
+  
+  .game-buttons {
+    gap: 5px;
   }
 } 

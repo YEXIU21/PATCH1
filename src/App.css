@@ -465,12 +465,12 @@ body {
   }
   
   .game-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   
   .game-image {
-    height: 120px;
+    height: 100px;
   }
   
   .banner-title {
@@ -482,7 +482,7 @@ body {
   }
   
   .game-title {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }
 

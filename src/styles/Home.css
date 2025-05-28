@@ -865,25 +865,30 @@
   }
   
   .game-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   
   .game-image {
-    height: 130px;
+    height: 100px;
   }
   
   .game-info {
-    padding: 12px;
+    padding: 8px;
   }
   
   .game-title {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+  }
+  
+  .game-category {
+    font-size: 0.7rem;
   }
   
   .game-buttons .btn {
-    padding: 8px;
-    font-size: 0.8rem;
+    padding: 6px;
+    font-size: 0.7rem;
   }
   
   .category-item {
